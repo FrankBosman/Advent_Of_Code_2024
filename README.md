@@ -1,14 +1,48 @@
+<div align=center>
 <img src="./.assets/christmas_ferris.png" width="164">
 
-# 🎄 Advent of Code {year}
-
-Solutions for [Advent of Code](https://adventofcode.com/) in [Rust](https://www.rust-lang.org/).
+# 🎄 Advent of Code 2024
+Solutions for [Advent of Code](https://adventofcode.com/) in [Rust](https://www.rust-lang.org/), Made by Frank Bosman.<br>
+Thanks to Felix Spöttel for the [template](https://github.com/fspoettel/advent-of-code-rust) of this repo.
+</div>
 
 <!--- advent_readme_stars table --->
 
 <!--- benchmarking table --->
 
 ---
+<br>
+<br>
+
+## Usefull commands
+Create a day and download the input:
+```sh
+cargo scaffold <day> --download
+```
+Run the implementation of a certain day:
+```sh
+cargo solve <day>
+```
+Submit the solution of a part of the day:
+```sh
+cargo solve <day> --submit <part>
+```
+Instead of specifying today can be used when you want to solve the challenge for today.
+```sh
+cargo today
+```
+
+Benchmark the execution time of the day:
+```sh
+cargo time <day>
+```
+Run all the tests:
+```sh
+cargo test <day>
+```
+
+<br>
+<br>
 
 ## Template setup
 
