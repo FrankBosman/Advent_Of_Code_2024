@@ -16,6 +16,16 @@ Thanks to Felix Spöttel for the [template](https://github.com/fspoettel/advent-
 <!--- advent_readme_stars table --->
 
 <!--- benchmarking table --->
+## Benchmarks
+
+| Day | Part 1 | Part 2 |
+| :---: | :---: | :---:  |
+| [Day 1](./src/bin/01.rs) | `108.5µs` | `165.3µs` |
+| [Day 2](./src/bin/02.rs) | `387.1µs` | `515.8µs` |
+| [Day 3](./src/bin/03.rs) | `894.0µs` | `1.4ms` |
+
+**Total: 3.47ms**
+<!--- benchmarking table --->
 
 ---
 <br>
