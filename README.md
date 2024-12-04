@@ -22,12 +22,12 @@ Thanks to Felix Spöttel for the [template](https://github.com/fspoettel/advent-
 
 | Day | Part 1 | Part 2 |
 | :---: | :---: | :---:  |
-| [Day 1](./src/bin/01.rs) | `108.5µs` | `165.3µs` |
-| [Day 2](./src/bin/02.rs) | `387.1µs` | `515.8µs` |
-| [Day 3](./src/bin/03.rs) | `894.0µs` | `1.4ms` |
-| [Day 4](./src/bin/04.rs) | `4.4ms` | `1.9ms` |
+| [Day 1](./src/bin/01.rs) | `79.9µs` | `139.8µs` |
+| [Day 2](./src/bin/02.rs) | `309.9µs` | `422.7µs` |
+| [Day 3](./src/bin/03.rs) | `688.9µs` | `1.1ms` |
+| [Day 4](./src/bin/04.rs) | `3.7ms` | `1.7ms` |
 
-**Total: 9.77ms**
+**Total: 8.14ms**
 <!--- benchmarking table --->
 
 ---

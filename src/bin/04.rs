@@ -82,10 +82,10 @@ pub fn part_two(input: &str) -> Option<u32> {
 
             // Check if the top left is an S or M and not the same the positive diagonal
             let (top_left, bottom_right) = (&grid[y - 1][x - 1], &grid[y + 1][x + 1]);
-            if top_left.eq(bottom_right) || !"MS".contains(bottom_right) || !"MS".contains(top_left) {continue;}
+            if top_left.eq(bottom_right) || !"MS".contains(bottom_right) || !"MS".contains(top_left) { continue; }
             // Check if the top left is an S or M and not the same in the negative diagonal
             let (bottom_left, top_right) = (&grid[y + 1][x - 1], &grid[y - 1][x + 1]);
-            if bottom_left.eq(top_right) || !"MS".contains(bottom_left) || !"MS".contains(top_right) {continue;}
+            if bottom_left.eq(top_right) || !"MS".contains(bottom_left) || !"MS".contains(top_right) { continue; }
             count += 1;
         }
     }
@@ -97,7 +97,8 @@ fn neighbours(x: usize, y: usize, size: &(usize, usize)) -> Vec<(i32, i32)> {
     let mut neighbours: Vec<(i32, i32)> = Vec::new();
     for y_offset in -1..=1 {
         for x_offset in -1..=1 {
-            let (new_y, new_x) = (y as i32 + y_offset, x as i32 + x_offset);
+            // Don't take a direction if the later letters are out of bound
+            let (new_y, new_x) = (y as i32 + y_offset * (XMAS.len() - 1) as i32, x as i32 + x_offset * (XMAS.len() - 1) as i32);
             if is_bound(new_x, new_y, size) {
                 neighbours.push((x_offset, y_offset));
             }
