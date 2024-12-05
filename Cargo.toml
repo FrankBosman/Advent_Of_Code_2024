@@ -29,3 +29,4 @@ tinyjson = "2.5.1"
 
 # Solution dependencies
 regex = "1.11.1"
+rayon = "1.10.0"

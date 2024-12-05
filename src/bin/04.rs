@@ -4,6 +4,9 @@ advent_of_code::solution!(4);
 const XMAS: [&str; 4] = ["X", "M", "A", "S"];
 
 pub fn part_one(input: &str) -> Option<u32> {
+    part_one_threads(input)
+}
+fn part_one_original(input: &str) -> Option<u32> {
     let (grid, size) = parse_to::grid_2d(input, None);
 
     // Setup checked grid
@@ -32,6 +35,31 @@ pub fn part_one(input: &str) -> Option<u32> {
 
     // print::print_if_grid_2d(&grid, &checked);
     Some(count)
+}
+
+fn part_one_threads(input: &str) -> Option<u32> {
+    let (grid, size) = parse_to::grid_2d(input, None);
+
+    // Split the traverse of the grid into 2
+    // using more than two thread is not a lot more efficient
+    let mut answer = 0u32;
+    let (part1, part2) = rayon::join(|| loop_grid(0, size.1/2, &size, &grid), || loop_grid(size.1/2, size.1, &size, &grid));
+    answer += part1 + part2;
+
+    Some(answer)
+}
+
+fn loop_grid(start: usize, end: usize, size: &(usize, usize), grid: &Vec<Vec<String>>) -> u32 {
+    let mut count = 0u32;
+    for y in start..end {
+        for x in 0..size.0 {
+            let valid = check_xmas(x, y, &size, &grid);
+            if !valid.is_empty() {
+                count += ((valid.len() - 1) / (XMAS.len() - 1)) as u32;
+            }
+        }
+    }
+    count
 }
 
 fn check_xmas(x: usize, y: usize, size: &(usize, usize), grid: &Vec<Vec<String>>) -> Vec<(usize, usize)> {
