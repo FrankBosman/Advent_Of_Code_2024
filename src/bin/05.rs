@@ -10,11 +10,15 @@ pub fn part_one(input: &str) -> Option<u32> {
     'main: for line in updates.lines() {
         let pages = line.split(",").collect::<Vec<&str>>();
         let mut past = HashSet::with_capacity(pages.len());
-        for page in pages.clone() {
+
+        // Go through every page and ensure that it is not in front of any page that should be behind it
+        for &page in &pages {
             let has_to_before = before_map.get(&page.to_string());
             if has_to_before.is_some() && !has_to_before.unwrap().is_disjoint(&past) { continue 'main; }
             past.insert(page.to_string());
         }
+
+        // Add the middle page to the counter
         let middle_page = pages.get(pages.len() / 2).unwrap();
         answer += middle_page.parse::<u32>().unwrap();
     }
@@ -44,6 +48,7 @@ pub fn part_two(input: &str) -> Option<u32> {
             order_map[count] = page.parse::<u32>().unwrap();
         }
 
+        // Add the middle to the counter
         let result = order_map.get(middle);
         if let Some(value) = result {
             answer += value;
@@ -55,6 +60,8 @@ pub fn part_two(input: &str) -> Option<u32> {
 
 fn correctly_ordered(before_map: &HashMap<String, HashSet<String>>, pages: &Vec<String>) -> bool {
     let mut past = HashSet::with_capacity(pages.len());
+
+    // Go through every page and ensure that it is not in front of any page that should be behind it
     for page in pages {
         let has_to_before = before_map.get(&page.to_string());
         if has_to_before.is_some() && !has_to_before.unwrap().is_disjoint(&past) { return false; }
@@ -71,7 +78,10 @@ fn parse_input(input: &str) -> (&str, HashMap<String, HashSet<String>>) {
     let mut before_map: HashMap<String, HashSet<String>> = HashMap::new();
     for line in part1.lines() {
         let (before, after) = line.split_once("|").unwrap();
-        before_map.entry(before.to_string()).and_modify(|map: &mut HashSet<String>| { map.insert(after.to_string()); }).or_insert(HashSet::from([after.to_string()]));
+
+        // Way faster than one lining it with map.entry
+        if !before_map.contains_key(before) { before_map.insert(before.to_string(), HashSet::new()); }
+        before_map.get_mut(before).unwrap().insert(after.to_string());
     }
     (part2, before_map)
 }
