@@ -1,16 +1,17 @@
+use rayon::prelude::*;
 advent_of_code::solution!(7);
-// TODO Optimize it, as it is very slow now, part 2: 11.4s
 
-pub fn part_one(input: &str) -> Option<u32> {
+pub fn part_one(input: &str) -> Option<u64> {
     let mut answer = 0u64;
+
+    // Test every equation
     for line in input.lines() {
         let result = process_line(line);
         if result.is_some() {
             answer += result.unwrap();
         }
     }
-    println!("Actual answer: {}", answer);
-    Some(answer as u32)
+    Some(answer)
 }
 
 fn process_line(line: &str) -> Option<u64> {
@@ -33,6 +34,7 @@ fn process_line(line: &str) -> Option<u64> {
             }
         }
 
+        // If it is correct directly return the result
         if test_val.eq(&result) {
             return Some(result);
         }
@@ -41,8 +43,8 @@ fn process_line(line: &str) -> Option<u64> {
     None
 }
 
-pub fn part_two(input: &str) -> Option<u32> {
-    // Part 1, but keep track of the lines that fail
+pub fn part_two(input: &str) -> Option<u64> {
+    // Part 1, but keep track of the lines that fail.
     let mut failed_1 = Vec::new();
     let mut answer = 0u64;
     for line in input.lines() {
@@ -54,17 +56,12 @@ pub fn part_two(input: &str) -> Option<u32> {
         }
     }
 
-    // Part 2, three operators
-    for line in failed_1 {
-        let result = process_line_part2(line);
-        if result.is_some() {
-            answer += result.unwrap();
-        }
-    }
+    // Part 2, three operators. but then in parallel
+    answer += failed_1.par_iter()
+        .fold(|| 0u64, |acc, line| acc + process_line_part2(line).unwrap_or_default())
+        .sum::<u64>();
 
-
-    println!("Actual answer: {}", answer);
-    Some(answer as u32)
+    Some(answer)
 }
 
 fn process_line_part2(line: &str) -> Option<u64> {
@@ -78,24 +75,28 @@ fn process_line_part2(line: &str) -> Option<u64> {
         // Evaluate the equation
         let mut x = step;
         let mut result = *equation.get(0).unwrap();
-        for (i, value) in equation.iter().enumerate().skip(1) {
-            // Use the bits of the current cycle to determine the operators
+        for (_i, value) in equation.iter().enumerate().skip(1) {
+            // Transform the cycle step into base three and use it as the operators, one at a time
             let m = x % 3;
             x = x / 3;
             let operator = std::char::from_digit(m, 3).unwrap();
+
+            // Use the operator to update the result
             match operator {
                 '0' => result += value,
                 '1' => result *= value,
                 '2' => {
                     // Concat ||
-                    let mut result_str = result.to_string();    // First convert to a string
-                    result_str.push_str(&value.to_string());           // Add the value string to it
-                    result = result_str.parse::<u64>().ok().unwrap();  // transform back to u64
-                },
+                    // Multiply the left side by the magnitude of the right, faster than using log.
+                    let mut pow: u64 = 10;
+                    while pow.lt(value) { pow *= 10; }  // Determine the magnitude
+                    result = result * pow + value;      // Concat them
+                }
                 _ => panic!("Invalid operator {}", operator)
             }
         }
 
+        // If it is correct directly return the result
         if test_val.eq(&result) {
             return Some(result);
         }
