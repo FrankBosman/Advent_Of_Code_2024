@@ -1,3 +1,4 @@
+use std::collections::HashSet;
 use std::ops::SubAssign;
 
 advent_of_code::solution!(9);
@@ -73,9 +74,91 @@ fn get_filler(size: &u32, last_id: &mut usize, last_index: &mut usize, last_size
 }
 
 pub fn part_two(input: &str) -> Option<usize> {
-    naive_2(input)
+    /// A faster, but less straightforward approach, instead of looking at the filled blocks it will look at the empty spots
+    /// First group everything into a readable disk-map containing the blocks and their sizes.
+    /// Then go over each block,
+    ///  - If it filled then directly calculate its score and add to the answer
+    ///  - If it is empty then find filled blocks to fill it. and make sure we only look at a filled block once using a set.
+    ///    Then, if the moved block is found later, thread it as an empty space.
+    ///     (Nothing will ever be moved there so no need to merge with surrounding empty blocks)
+    ///
+    /// Left the commented result array in it which makes it easier to see how the code works. (\\\\)
+
+    // parse the data into a vector containing the blocks with their id and sizes.
+    let data = input.trim().chars().map(|char| char.to_digit(10).unwrap()).collect::<Vec<_>>();
+    let disk_map = data.iter().enumerate().map(|(i, size)| {
+        (
+            if i % 2 == 0 { Some(i / 2) } else { None },
+            *size as usize,
+        )
+    }).collect::<Vec<_>>();
+
+    // Keep track of the processed items and the empty block sizes which can't be filled anymore
+    let mut processed: HashSet<usize> = HashSet::new();
+    let mut not_available_sizes = HashSet::new();
+
+    //// let mut result = Vec::new();
+    let mut answer = 0usize;
+    let mut pos = 0usize;
+    for (i, (id, size)) in disk_map.iter().enumerate() {
+
+        // filled block
+        if id.is_some() && !processed.contains(&id.unwrap()) {
+            //// result.extend(vec![id.unwrap(); *size]);
+            answer += (size * (pos * 2 + (size - 1)) / 2) * id.unwrap();
+        }
+        // empty block
+        else if size > &0 {
+            // Try to keep filling the void
+            let mut remainder = *size;
+            // Only continue if there is space left and something can fit in that space
+            while remainder > 0 && !not_available_sizes.contains(&remainder) {
+                let filler = get_filler_2(&remainder, i, &disk_map, &processed);
+                // Fill the space if something fits
+                if let Some((filler_id, filler_size)) = filler {
+                    processed.insert(filler_id);                      // Note it as processed
+
+                    //// result.extend(vec![filler_id; filler_size]);  // add it to the results
+                    answer += (filler_size * ((pos+(*size - remainder)) * 2 + (filler_size - 1)) / 2) * filler_id;
+
+                    remainder -= filler_size;
+                }
+                // If nothing fits in that space, remember it for later
+                else {
+                    not_available_sizes.insert(remainder);
+                    break;
+                }
+            }
+
+            //// Fill the remainder with zeros, not needed when directly calculating the answer
+            //// if remainder > 0 {
+            ////     result.extend(vec![0; remainder]);
+            //// }
+        }
+        pos += size;
+    }
+
+    //// calculate the answer, not needed when directly calculating the answer
+    //// let answer = result.iter().enumerate().fold(0, |acc, (i, val)| acc + i * val);
+    Some(answer)
 }
+
+fn get_filler_2(size: &usize, index: usize, data: &Vec<(Option<usize>, usize)>, processed: &HashSet<usize>) -> Option<(usize, usize)> {
+    for (i, (id, block_size)) in data.iter().enumerate().rev() {
+        if i <= index { return None; }  // Only look to the right
+        // Check if we are looking at a filled block, the size fits, and make sure to only process everything once
+        if id.is_none() || block_size > size || processed.contains(&id.unwrap()) { continue; }
+        return Some((id.unwrap(), *block_size));
+    }
+    None
+}
+
 pub fn naive_2(input: &str) -> Option<usize> {
+    /// Slower but more straightforward approach to solve part 2.
+    /// Converts everything to the vector.
+    /// Then go over each filled block from end to start, try to find a spot where the filled block can move to.
+    /// If has been found, move the block over and continue, just like the example on the site.
+
     let input = input.trim();
     // Put everything in a vector
     let disk_map = input.chars().map(|char| char.to_digit(10).unwrap()).collect::<Vec<_>>();
