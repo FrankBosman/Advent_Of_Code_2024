@@ -1,5 +1,7 @@
 use advent_of_code::helpers::parse_to::extract_numbers;
 use advent_of_code::helpers::Point;
+use rayon::prelude::*;
+
 
 advent_of_code::solution!(14);
 
@@ -33,17 +35,23 @@ pub fn part_two(input: &str) -> Option<u32> {
     // Parse the input and create the robots
     let lines = input.lines().collect::<Vec<_>>();
     let size = if lines.len() <= 12 { Point::new(11, 7) } else { Point::new(101, 103) };
-    let mut robots = lines.into_iter().map(|line| Robot::new(line)).collect::<Vec<_>>();
+    let robots = lines.into_iter().map(|line| Robot::new(line)).collect::<Vec<_>>();
 
     // Loop until it finds the Christmas tree
-    for i in 1..20000 {
-        robots.iter_mut().for_each(|robot| robot.step(1, &size));
-        if check_tree(&robots, &size) {
-            // print_field(&robots, &size);
-            return Some(i);
-        }
-    }
-    None
+    // for i in 1..20000 {
+    //     robots.iter_mut().for_each(|robot| robot.step(1, &size));
+    //     if check_tree(&robots, &size) {
+    //         // print_field(&robots, &size);
+    //         return Some(i);
+    //     }
+    // }
+
+    // Search in parallel, with a more optimistic lower and upper bound
+    let result =(5000..15000u32).into_par_iter().find_first(|steps| {
+        let robots = robots.iter().map(|robot| robot.step_copy(*steps as i32, &size)).collect::<Vec<_>>();
+        if check_tree(&robots, &size) { true } else { false }
+    });
+    result
 }
 
 /// Test if the robots from a Christmas tree, by searching for a ^
@@ -108,6 +116,18 @@ impl Robot {
         if new_pos.y() < 0 { new_pos = new_pos + Point::new(0, size.y()) }
 
         self.position = new_pos;
+    }
+
+    fn step_copy(&self, steps: i32, size: &Point) -> Self {
+        // Move to the new spot and ensure it remains within the field
+        let new_pos = self.position + self.velocity.multiply(steps);
+        let mut new_pos = new_pos % *size;
+
+        // If they are on the negative side, move them over
+        if new_pos.x() < 0 { new_pos = new_pos + Point::new(size.x(), 0) }
+        if new_pos.y() < 0 { new_pos = new_pos + Point::new(0, size.y()) }
+
+        Self{ position: new_pos, velocity: self.velocity }
     }
 
     fn x(&self) -> usize { self.position.x() as usize }
