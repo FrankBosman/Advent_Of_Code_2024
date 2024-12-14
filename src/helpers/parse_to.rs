@@ -24,3 +24,49 @@ pub fn grid_2d(input: &str, delimiter: Option<&str>) -> (Vec<Vec<String>>, (usiz
     }
     (result, size)
 }
+
+/// Extracts all the integers from a string to a i32 vector.<br>
+/// Decimal numbers are not supported
+pub fn extract_numbers(input: &str) -> Vec<i32> {
+    let mut result = Vec::new();
+
+    let mut current = 0;
+    let mut is_negative = false;
+    let mut modified = false;
+    for char in input.chars() {
+        if char == '-' {
+            is_negative = true;
+        } else if char.is_ascii_digit() {
+            current = current * 10 + char.to_digit(10).unwrap() as i32;
+            modified = true;
+        } else if modified {
+            result.push(current * (if is_negative { -1 } else { 1 }));
+            current = 0;
+            is_negative = false;
+            modified = false;
+        }
+    }
+    result.push(current * (if is_negative { -1 } else { 1 }));
+    result
+}
+
+/// Extracts all the integers from a string to an u32 vector.<br>
+/// Decimal numbers are not supported
+pub fn extract_u32(input: &str) -> Vec<u32> {
+    let mut result = Vec::new();
+
+    let mut current = 0;
+    let mut modified = false;
+    for char in input.chars() {
+       if char.is_ascii_digit() {
+            current = current * 10 + char.to_digit(10).unwrap();
+            modified = true;
+        } else if modified {
+            result.push(current);
+            current = 0;
+            modified = false;
+        }
+    }
+    result.push(current);
+    result
+}

@@ -1,5 +1,5 @@
 use std::fmt::{Display, Formatter};
-use std::ops::{Add, Sub};
+use std::ops::{Add, Rem, Sub};
 
 #[derive(Debug, Hash, Copy, Clone, Eq, PartialEq)]
 pub struct Point {
@@ -63,6 +63,10 @@ impl Point {
     pub fn y(&self) -> i32 {
         self.y
     }
+
+    pub fn modulo(&self, factor: i32) -> Self {
+        Self::new(self.x % factor, self.y % factor)
+    }
 }
 
 impl Sub for Point {
@@ -82,6 +86,16 @@ impl Add for Point {
         Self {
             x: self.x + other.x,
             y: self.y + other.y,
+        }
+    }
+}
+
+impl Rem for Point {
+    type Output = Self;
+    fn rem(self, other: Self) -> Self::Output {
+        Self {
+            x: self.x % other.x,
+            y: self.y % other.y,
         }
     }
 }
