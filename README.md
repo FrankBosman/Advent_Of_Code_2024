@@ -46,8 +46,9 @@ Thanks to Felix Spöttel for the [template](https://github.com/fspoettel/advent-
 | [Day 12](./src/bin/12.rs) | `11.0ms` | `11.0ms` |
 | [Day 13](./src/bin/13.rs) | `49.0µs` | `54.9µs` |
 | [Day 14](./src/bin/14.rs) | `106.1µs` | `46.1ms` |
+| [Day 15](./src/bin/15.rs) | `579.9µs` | `1.0ms` |
 
-**Total: 319.75ms**
+**Total: 321.33ms**
 <!--- benchmarking table --->
 
 ---
