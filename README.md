@@ -27,6 +27,7 @@ Thanks to Felix Spöttel for the [template](https://github.com/fspoettel/advent-
 | [Day 14](https://adventofcode.com/2024/day/14) | 🌟 | 🌟 |
 | [Day 15](https://adventofcode.com/2024/day/15) | 🌟 | 🌟 |
 | [Day 17](https://adventofcode.com/2024/day/17) | 🌟 | 🌟 |
+| [Day 18](https://adventofcode.com/2024/day/18) | 🌟 | 🌟 |
 <!--- advent_readme_stars table --->
 
 <!--- benchmarking table --->
