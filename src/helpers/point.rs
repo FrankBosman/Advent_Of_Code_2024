@@ -67,6 +67,10 @@ impl Point {
     pub fn modulo(&self, factor: i32) -> Self {
         Self::new(self.x % factor, self.y % factor)
     }
+
+    pub fn manhattan(&self, size: &Point) -> u32 {
+        self.x.abs_diff(size.x) + self.y.abs_diff(size.y)
+    }
 }
 
 impl Sub for Point {
