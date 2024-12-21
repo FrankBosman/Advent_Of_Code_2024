@@ -32,7 +32,7 @@ impl Point {
     }
 
     pub fn get_neighbours(&self, size: &Point, diagonal: bool) -> Vec<Point> {
-        let directions=  if diagonal {
+        let directions = if diagonal {
             let mut temp = Vec::with_capacity(8);
             for x in [-1, 1] {
                 for y in [-1, 1] {
@@ -64,12 +64,25 @@ impl Point {
         self.y
     }
 
+    pub fn x_usize(&self) -> usize {
+        self.x as usize
+    }
+
+    pub fn y_usize(&self) -> usize {
+        self.y as usize
+    }
+
     pub fn modulo(&self, factor: i32) -> Self {
         Self::new(self.x % factor, self.y % factor)
     }
 
     pub fn manhattan(&self, size: &Point) -> u32 {
         self.x.abs_diff(size.x) + self.y.abs_diff(size.y)
+    }
+
+    pub fn checked_get_2d<'a, T>(&self, array_2d: &'a Vec<Vec<T>>) -> Option<&'a T> {
+        let bounds = Self::new(array_2d[0].len() as i32, array_2d.len() as i32);
+        if self.in_bounds(&bounds) { Some(&array_2d[self.y as usize][self.x as usize]) } else { None }
     }
 }
 

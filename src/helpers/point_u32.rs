@@ -141,3 +141,9 @@ impl Display for PointU32 {
         write!(f, "({}, {})", self.x, self.y)
     }
 }
+
+impl From<(usize, usize)> for PointU32 {
+    fn from(value: (usize, usize)) -> Self {
+        Self::new(value.0 as u32, value.1 as u32)
+    }
+}
